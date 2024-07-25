@@ -19,6 +19,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -67,10 +68,14 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TipTimeLayout() {
-    var amountInput by remember { mutableStateOf("") }
+    var amountInput by remember { mutableStateOf("") } // total bill as string
 
-    val amount = amountInput.toDoubleOrNull() ?: 0.0
-    val tip = calculateTip(amount)
+    val amount = amountInput.toDoubleOrNull() ?: 0.0 // total bill converted to double
+
+
+    var tipInput by remember { mutableStateOf("") }
+    var tipPercent: Double = tipInput.toDoubleOrNull() ?: 00.00
+    val tip = calculateTip(amount, tipPercent)
 
     Column(
         modifier = Modifier
@@ -90,6 +95,13 @@ fun TipTimeLayout() {
         EditNumberField(
             value = amountInput,
             onValueChanged = { amountInput = it },
+            label = R.string.bill_amount,
+            modifier = Modifier.padding(bottom = 32.dp).fillMaxWidth()
+        )
+        EditNumberField(
+            value = tipInput,
+            onValueChanged = { newValue: String -> tipInput = newValue },
+            label = R.string.how_was_the_service,
             modifier = Modifier.padding(bottom = 32.dp).fillMaxWidth()
         )
         Text(
@@ -104,6 +116,7 @@ fun TipTimeLayout() {
 fun EditNumberField(
     value: String,
     onValueChanged: (String) -> Unit,
+    @StringRes label: Int,
     modifier: Modifier
 ) {
     TextField(
@@ -111,7 +124,7 @@ fun EditNumberField(
         singleLine = true,
         modifier = modifier,
         onValueChange = onValueChanged,
-        label = { Text(stringResource(R.string.bill_amount)) },
+        label = { Text(stringResource(label)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
 }
